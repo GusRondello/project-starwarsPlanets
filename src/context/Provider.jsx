@@ -6,6 +6,12 @@ import Context from './Context';
 function Provider({ children }) {
   const [data, setData] = useState([]);
   const [planets, setPlanets] = useState([]);
+  const [filterByName, setFilterByName] = useState('');
+  const [numericalFilter, setNumericalFilter] = useState(
+    { column: 'population',
+      comparison: 'maior que',
+      value: 0 },
+  );
 
   useEffect(() => {
     const requestApi = async () => {
@@ -16,17 +22,43 @@ function Provider({ children }) {
     requestApi();
   }, []);
 
-  const fillterByName = (value) => {
-    const planetName = planets.filter(({ name }) => name.includes(value));
-    setData(planetName);
-  };
+  useEffect(() => {
+    const lowerCasePlanet = filterByName.toLowerCase();
+    const filterPlanetName = () => {
+      const planetFiltered = planets
+        .filter(({ name }) => name.toLowerCase().includes(lowerCasePlanet));
+      setData(planetFiltered);
+    };
+    filterPlanetName();
+  }, [filterByName, planets]);
+
+  useEffect(() => {
+    const filterNumPlanet = () => {
+      if (numericalFilter.value === 0) {
+        return planets;
+      }
+      const planetFiltered = planets.filter((planet) => {
+        const { column, comparison, value } = numericalFilter;
+        const compareNumber = Number(planet[column]);
+        if (comparison === 'maior que') return compareNumber > value;
+        if (comparison === 'menor que') return compareNumber < value;
+        return compareNumber === value;
+      });
+      setData(planetFiltered);
+      console.log(planetFiltered);
+    };
+    filterNumPlanet();
+  }, [numericalFilter, planets]);
 
   const myContext = {
     data,
     setData,
     planets,
     setPlanets,
-    fillterByName,
+    filterByName,
+    setFilterByName,
+    numericalFilter,
+    setNumericalFilter,
   };
 
   return (
