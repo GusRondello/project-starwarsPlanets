@@ -22,7 +22,7 @@ function Filters() {
     setNumericalFilter({
       column: columnFilter,
       comparison: comparisonFilter,
-      value: filterNumValue,
+      value: Number(filterNumValue),
     });
   };
   return (

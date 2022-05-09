@@ -8,9 +8,9 @@ function Provider({ children }) {
   const [planets, setPlanets] = useState([]);
   const [filterByName, setFilterByName] = useState('');
   const [numericalFilter, setNumericalFilter] = useState(
-    { column: 'population',
-      comparison: 'maior que',
-      value: 0 },
+    { column: '',
+      comparison: '',
+      value: '' },
   );
 
   useEffect(() => {
@@ -34,18 +34,18 @@ function Provider({ children }) {
 
   useEffect(() => {
     const filterNumPlanet = () => {
-      if (numericalFilter.value === 0) {
+      if (numericalFilter.value === '') {
         return planets;
       }
       const planetFiltered = planets.filter((planet) => {
         const { column, comparison, value } = numericalFilter;
         const compareNumber = Number(planet[column]);
-        if (comparison === 'maior que') return compareNumber > value;
-        if (comparison === 'menor que') return compareNumber < value;
-        return compareNumber === value;
+        if (Number.isNaN(compareNumber)) return false;
+        if (comparison === 'maior que') return compareNumber > Number(value);
+        if (comparison === 'menor que') return compareNumber < Number(value);
+        return compareNumber === Number(value);
       });
       setData(planetFiltered);
-      console.log(planetFiltered);
     };
     filterNumPlanet();
   }, [numericalFilter, planets]);
