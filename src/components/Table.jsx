@@ -23,23 +23,28 @@ function Table() {
         </tr>
       </thead>
       <tbody>
-        {data.map((planet) => (
-          <tr key={ planet.name }>
-            <td>{planet.name}</td>
-            <td>{planet.rotation_period}</td>
-            <td>{planet.orbital_period}</td>
-            <td>{planet.diameter}</td>
-            <td>{planet.climate}</td>
-            <td>{planet.gravity}</td>
-            <td>{planet.terrain}</td>
-            <td>{planet.surface_water}</td>
-            <td>{planet.population}</td>
-            <td>{planet.films}</td>
-            <td>{planet.created}</td>
-            <td>{planet.edited}</td>
-            <td>{planet.url}</td>
-          </tr>
-        ))}
+        {data
+          .map(({
+            name, rotation_period: rotationPeriod,
+            orbital_period: orbitalPeriod, diameter, climate, gravity,
+            terrain, surface_water: surfaceWater, population, films, created, edited, url,
+          }) => (
+            <tr key={ name }>
+              <td>{name}</td>
+              <td>{rotationPeriod}</td>
+              <td>{orbitalPeriod}</td>
+              <td>{diameter}</td>
+              <td>{climate}</td>
+              <td>{gravity}</td>
+              <td>{terrain}</td>
+              <td>{surfaceWater}</td>
+              <td>{population}</td>
+              <td>{films}</td>
+              <td>{created}</td>
+              <td>{edited}</td>
+              <td>{url}</td>
+            </tr>
+          ))}
       </tbody>
     </table>
   );

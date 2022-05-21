@@ -7,11 +7,7 @@ function Provider({ children }) {
   const [data, setData] = useState([]);
   const [planets, setPlanets] = useState([]);
   const [filterByName, setFilterByName] = useState('');
-  const [numericalFilter, setNumericalFilter] = useState(
-    { column: '',
-      comparison: '',
-      value: '' },
-  );
+  const [numericalFilter, setNumericalFilter] = useState([]);
 
   useEffect(() => {
     const requestApi = async () => {
@@ -32,37 +28,35 @@ function Provider({ children }) {
     filterPlanetName();
   }, [filterByName, planets]);
 
+  const newNumericFilter = (newFilter) => {
+    setNumericalFilter([...numericalFilter, newFilter]);
+  };
+
   useEffect(() => {
     const filterNumPlanet = () => {
-      if (numericalFilter.value === '') {
-        return planets;
+      const reduceCallback = (acc, { column, comparison, value }, index) => {
+        const filterCallback = (planet) => {
+          const comparisonValue = Number(planet[column]);
+          if (comparison === 'maior que') return comparisonValue > value;
+          if (comparison === 'menor que') return comparisonValue < value;
+          return comparisonValue === Number(value);
+        };
+        if (index === 0) {
+          acc = planets.filter(filterCallback);
+          return acc;
+        }
+        return acc.filter(filterCallback);
+      };
+      if (numericalFilter.length !== 0) {
+        const newData = numericalFilter.reduce(reduceCallback, []);
+        setData(newData);
       }
-      const planetFiltered = planets.filter((planet) => {
-        const { column, comparison, value } = numericalFilter;
-        const compareNumber = Number(planet[column]);
-        if (Number.isNaN(compareNumber)) return false;
-        if (comparison === 'maior que') return compareNumber > Number(value);
-        if (comparison === 'menor que') return compareNumber < Number(value);
-        return compareNumber === Number(value);
-      });
-      setData(planetFiltered);
     };
     filterNumPlanet();
   }, [numericalFilter, planets]);
 
-  const myContext = {
-    data,
-    setData,
-    planets,
-    setPlanets,
-    filterByName,
-    setFilterByName,
-    numericalFilter,
-    setNumericalFilter,
-  };
-
   return (
-    <Context.Provider value={ myContext }>
+    <Context.Provider value={ { data, setFilterByName, newNumericFilter } }>
       {children}
     </Context.Provider>
   );
