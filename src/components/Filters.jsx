@@ -4,9 +4,18 @@ import Context from '../context/Context';
 function Filters() {
   const { filterByName, setFilterByName, newNumericFilter } = useContext(Context);
 
+  const colunmOptions = [
+    'population',
+    'orbital_period',
+    'diameter',
+    'rotation_period',
+    'surface_water',
+  ];
+
   const [columnFilter, setColumnFilter] = useState('population');
   const [comparisonFilter, setComparisonFilter] = useState('maior que');
   const [filterNumValue, setFilterNumValue] = useState(0);
+  const [columnFilterOpt, setColumnFilterOpt] = useState(colunmOptions);
 
   const handleInputChange = ({ target: { value, name } }) => {
     if (name === 'name-filter') setFilterByName(value);
@@ -19,6 +28,7 @@ function Filters() {
   };
 
   const handleButtonClick = () => {
+    setColumnFilterOpt(columnFilterOpt.filter((opt) => opt !== columnFilter));
     newNumericFilter({
       column: columnFilter,
       comparison: comparisonFilter,
@@ -39,11 +49,9 @@ function Filters() {
         onChange={ handleOptionChange }
         name="column"
       >
-        <option>population</option>
-        <option>orbital_period</option>
-        <option>diameter</option>
-        <option>rotation_period</option>
-        <option>surface_water</option>
+        {columnFilterOpt.map((filterOption) => (
+          <option key={ filterOption }>{filterOption}</option>
+        ))}
       </select>
       <select
         data-testid="comparison-filter"
