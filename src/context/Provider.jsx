@@ -32,6 +32,12 @@ function Provider({ children }) {
     setNumericalFilter([...numericalFilter, newFilter]);
   };
 
+  const removeNumericFilter = (filterRemoved) => {
+    const updateFilters = numericalFilter
+      .filter(({ column }) => column !== filterRemoved);
+    setNumericalFilter(updateFilters);
+  };
+
   useEffect(() => {
     const filterNumPlanet = () => {
       const reduceCallback = (acc, { column, comparison, value }, index) => {
@@ -50,13 +56,24 @@ function Provider({ children }) {
       if (numericalFilter.length !== 0) {
         const newData = numericalFilter.reduce(reduceCallback, []);
         setData(newData);
+      } else {
+        setData(planets);
       }
     };
     filterNumPlanet();
   }, [numericalFilter, planets]);
 
+  const ContextValue = {
+    data,
+    setFilterByName,
+    newNumericFilter,
+    numericalFilter,
+    removeNumericFilter,
+    setNumericalFilter,
+  };
+
   return (
-    <Context.Provider value={ { data, setFilterByName, newNumericFilter } }>
+    <Context.Provider value={ ContextValue }>
       {children}
     </Context.Provider>
   );
