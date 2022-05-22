@@ -30,7 +30,7 @@ function Table() {
             terrain, surface_water: surfaceWater, population, films, created, edited, url,
           }) => (
             <tr key={ name }>
-              <td>{name}</td>
+              <td data-testid="planet-name">{name}</td>
               <td>{rotationPeriod}</td>
               <td>{orbitalPeriod}</td>
               <td>{diameter}</td>

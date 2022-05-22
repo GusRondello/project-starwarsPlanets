@@ -8,11 +8,57 @@ function Provider({ children }) {
   const [planets, setPlanets] = useState([]);
   const [filterByName, setFilterByName] = useState('');
   const [numericalFilter, setNumericalFilter] = useState([]);
+  const [order, setOrder] = useState({});
+  const [backupData, setBackupData] = useState([]);
+
+  const nameSorter = (a, b) => {
+    const minusOne = -1;
+
+    if (a.name > b.name) {
+      return 1;
+    }
+
+    if (a.name < b.name) {
+      return minusOne;
+    }
+
+    return 0;
+  };
+
+  const ascSorter = (a, b) => {
+    const minusOne = -1;
+
+    if (+a.value > +b.value) {
+      return 1;
+    }
+
+    if (+a.value < +b.value) {
+      return minusOne;
+    }
+
+    return 0;
+  };
+
+  const descSorter = (a, b) => {
+    const minusOne = -1;
+
+    if (+a.value < +b.value) {
+      return 1;
+    }
+
+    if (+a.value > +b.value) {
+      return minusOne;
+    }
+
+    return 0;
+  };
 
   useEffect(() => {
     const requestApi = async () => {
       const results = await getPlanets();
+      results.sort(nameSorter);
       setData(results);
+      setBackupData(results);
       setPlanets(results);
     };
     requestApi();
@@ -24,6 +70,7 @@ function Provider({ children }) {
       const planetFiltered = planets
         .filter(({ name }) => name.toLowerCase().includes(lowerCasePlanet));
       setData(planetFiltered);
+      setBackupData(planetFiltered);
     };
     filterPlanetName();
   }, [filterByName, planets]);
@@ -56,12 +103,31 @@ function Provider({ children }) {
       if (numericalFilter.length !== 0) {
         const newData = numericalFilter.reduce(reduceCallback, []);
         setData(newData);
+        setBackupData(newData);
       } else {
         setData(planets);
+        setBackupData(planets);
       }
     };
     filterNumPlanet();
   }, [numericalFilter, planets]);
+
+  useEffect(() => {
+    const arraySort = () => {
+      const { column, sort } = order;
+      const dataMap = backupData.map((planet, index) => ({
+        value: planet[column],
+        index,
+      }));
+      if (sort === 'ASC') dataMap.sort(ascSorter);
+      if (sort === 'DESC') dataMap.sort(descSorter);
+      const orderData = dataMap.map(({ index }) => backupData[index]);
+      const dataKnown = orderData.filter((planet) => planet[column] !== 'unknown');
+      const dataUnknown = orderData.filter((planet) => planet[column] === 'unknown');
+      return [...dataKnown, ...dataUnknown];
+    };
+    setData(arraySort());
+  }, [backupData, order]);
 
   const ContextValue = {
     data,
@@ -70,6 +136,7 @@ function Provider({ children }) {
     numericalFilter,
     removeNumericFilter,
     setNumericalFilter,
+    setOrder,
   };
 
   return (

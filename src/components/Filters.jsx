@@ -1,6 +1,14 @@
 import React, { useContext, useState } from 'react';
 import Context from '../context/Context';
 
+export const filterOptions = [
+  'population',
+  'orbital_period',
+  'diameter',
+  'rotation_period',
+  'surface_water',
+];
+
 function Filters() {
   const { filterByName,
     setFilterByName,
@@ -9,18 +17,10 @@ function Filters() {
     removeNumericFilter,
     setNumericalFilter } = useContext(Context);
 
-  const colunmOptions = [
-    'population',
-    'orbital_period',
-    'diameter',
-    'rotation_period',
-    'surface_water',
-  ];
-
   const [columnFilter, setColumnFilter] = useState('population');
   const [comparisonFilter, setComparisonFilter] = useState('maior que');
   const [filterNumValue, setFilterNumValue] = useState(0);
-  const [columnFilterOpt, setColumnFilterOpt] = useState(colunmOptions);
+  const [columnFilterOpt, setColumnFilterOpt] = useState(filterOptions);
 
   const handleInputChange = ({ target: { value, name } }) => {
     if (name === 'name-filter') setFilterByName(value);
